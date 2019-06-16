@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/bin/Debug/netcoreapp2.2
+/obj
+/.vs/SagePayServerIntegration
+/bin/Release/netcoreapp2.2
+/Properties/PublishProfiles
+/SagePayServerIntegration.csproj.user

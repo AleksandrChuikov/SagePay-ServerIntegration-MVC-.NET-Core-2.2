@@ -1,0 +1,140 @@
+﻿@model SagePayServerIntegration.Models.PaymentDTO
+@{
+    ViewData["Title"] = "SagePay";
+}
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 offset-sm-3">
+                <h3>Please enter billing information for your credit or debit card</h3>
+                <hr />
+                <h5>Amount to pay: @ViewBag.Amount</h5>
+                <hr />
+                <form method="post" action="../submited">
+                    <div class="form-group">
+                        <input asp-for="BillingFirstnames" class="form-control" />
+                        <span asp-validation-for="BillingFirstnames" />
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="BillingSurname" class="form-control" />
+                        <span asp-validation-for="BillingSurname" />
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="BillingAddress1" class="form-control" />
+                        <span asp-validation-for="BillingAddress1" />
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="BillingCity" class="form-control" />
+                        <span asp-validation-for="BillingCity" />
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="BillingPostCode" class="form-control" />
+                        <span asp-validation-for="BillingPostCode" />
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="CustomerEMail" class="form-control" />
+                        <span asp-validation-for="CustomerEMail" />
+                    </div>
+                    <div class="form-group">
+                        <select asp-for="BillingCountry" asp-items="ViewBag.Countries" class="form-control">
+                            <option selected="selected" disabled="disabled">Select Billing Country*</option>
+                        </select>
+                        <span asp-validation-for="BillingCountry"></span>
+                    </div>
+                    <div class="form-group" id="billing_state">
+                        <select asp-for="BillingState" asp-items="ViewBag.States" class="form-control">
+
+                            <option selected="selected" disabled="disabled">Select Billing State*</option>
+                        </select>
+                        <span asp-validation-for="BillingState"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" value="" checked id="shippingAdress_checkbox">My shipping address is the same as billing address
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="delivery_section">
+                        <hr />
+                        <div class="form-group">
+                            <input asp-for="DeliveryFirstnames" class="form-control" />
+                            <span asp-validation-for="DeliveryFirstnames" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="DeliverySurname" class="form-control" />
+                            <span asp-validation-for="DeliverySurname" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="DeliveryAddress1" class="form-control" />
+                            <span asp-validation-for="DeliveryAddress1" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="DeliveryCity" placeholder="Delivery City*" class="form-control" />
+                            <span asp-validation-for="DeliveryCity" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="DeliveryPostCode" class="form-control" />
+                            <span asp-validation-for="DeliveryPostCode" />
+                        </div>
+                        <div class="form-group">
+                            <select asp-for="DeliveryCountry" asp-items="ViewBag.Countries" class="form-control">
+                                <option selected="selected" disabled="disabled">Select Delivery Country*</option>
+                            </select>
+                            <span asp-validation-for="DeliveryCountry"></span>
+                        </div>
+                        <div class="form-group" id="delivery_state">
+                            <select asp-for="DeliveryState" asp-items="ViewBag.States" class="form-control">
+
+                                <option selected="selected" disabled="disabled">Select Delivery State*</option>
+                            </select>
+                            <span asp-validation-for="DeliveryState"></span>
+                        </div>
+                    </div>
+
+                    <input asp-for="Currency" type="hidden" class="form-control" />
+                    <input asp-for="Amount" type="hidden" class="form-control" />
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+<script>
+    $().ready(function () {
+        $("#billing_state").hide();
+        $("#delivery_state").hide();
+        $("#delivery_section").hide();
+        $(document).on('change', '#BillingCountry', function () {
+            var country = $(this).val();
+            if (country == "US") {
+                $("#billing_state").show();
+            }
+            else {
+                $("#billing_state").hide();
+            }
+        });
+        $(document).on('change', '#shippingAdress_checkbox', function () {
+            if ($(this).is(":checked")) {
+                $("#delivery_section").hide();
+            }
+            else {
+                $("#delivery_section").show();
+            }
+        });
+        $(document).on('change', '#DeliveryCountry', function () {
+            var country = $(this).val();
+            if (country == "US") {
+                $("#delivery_state").show();
+            }
+            else {
+                $("#delivery_state").hide();
+            }
+        });
+    })
+</script>
