@@ -27,12 +27,12 @@ namespace SagePayServerIntegration.Controllers
     {
         public IConfiguration _configuration;
         private IHashService _hashService;
-        private IPaymentRepository _invoiceRepository;
-        public PaymentController(IConfiguration configuration, IHashService hashService, IPaymentRepository invoiceRepository)
+        private IPaymentRepository _paymentRepository;
+        public PaymentController(IConfiguration configuration, IHashService hashService, IPaymentRepository paymentRepository)
         {
             _configuration = configuration;
             _hashService = hashService;
-            _invoiceRepository = invoiceRepository;
+            _paymentRepository = paymentRepository;
         }
 
         public IActionResult Index()
@@ -42,9 +42,9 @@ namespace SagePayServerIntegration.Controllers
                 Currency = "GBP",
                 Amount = 45,
             };
-            var countries = _invoiceRepository.GetCountries();
+            var countries = _paymentRepository.GetCountries();
             ViewBag.Countries = new SelectList(countries, "Code", "Name");
-            var states = _invoiceRepository.GetStates();
+            var states = _paymentRepository.GetStates();
             ViewBag.States = new SelectList(states, "Code", "Name");
             ViewBag.Amount = string.Join(" ", paymentDTO.Currency, paymentDTO.Amount);
             return View(paymentDTO);
@@ -102,7 +102,7 @@ namespace SagePayServerIntegration.Controllers
                 Status = paymentResponse.Status
             };
             string url = CreateUrl(paymentResponse.Status, paymentResponse.VPSSignature, hashResult, sagePayPaymentDetail);
-            _invoiceRepository.UpdatePayment(paymentResponse.VendorTxCode, sagePayPaymentDetail);
+            _paymentRepository.UpdatePayment(paymentResponse.VendorTxCode, sagePayPaymentDetail);
             return url;
         }
 
@@ -178,13 +178,13 @@ namespace SagePayServerIntegration.Controllers
                 BillingState = paymentDTO.BillingState,
                 CustomerEMail = paymentDTO.CustomerEMail
             };
-            await _invoiceRepository.Create(invoice);
+            await _paymentRepository.Create(invoice);
             return nextURL;
         }
 
         private string CreateMD5signature(SagePayPaymentResponse paymentResponse)
         {
-            var SecurityKey = _invoiceRepository.GetSecurityKey(paymentResponse.VendorTxCode);
+            var SecurityKey = _paymentRepository.GetSecurityKey(paymentResponse.VendorTxCode);
             var VendorName = _configuration["Vendor"].ToLower();
             var MD5signature = $@"{paymentResponse.VPSTxId}{paymentResponse.VendorTxCode}{paymentResponse.Status}{paymentResponse.TxAuthNo}{VendorName}{paymentResponse.AVSCV2}{SecurityKey}{paymentResponse.AddressResult}{paymentResponse.PostCodeResult}{paymentResponse.CV2Result}{paymentResponse.GiftAid}NOTCHECKED{paymentResponse.CAVV}{paymentResponse.AddressStatus}{paymentResponse.PayerStatus}{paymentResponse.CardType}{paymentResponse.Last4Digits}{paymentResponse.DeclineCode}{paymentResponse.ExpiryDate}{paymentResponse.FraudResponse}{paymentResponse.BankAuthCode}";
             return MD5signature;
